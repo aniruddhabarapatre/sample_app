@@ -53,7 +53,7 @@ class User < ActiveRecord::Base
   def create_reset_digest
     self.reset_token = User.new_token
     update_columns(reset_digest:  User.digest(reset_token), reset_sent_at: Time.zone.now)
-end
+  end
 
   # Sends password reset email
   def send_password_reset_email
@@ -63,6 +63,12 @@ end
   # Returns true if password reset has expired
   def password_reset_expired?
     reset_sent_at < 2.hours.ago
+  end
+
+  # Defines a proto-feed
+  # See 'Following users' for full implementation
+  def feed
+    Micropost.where("user_id = ?", id)  
   end
 
   private
